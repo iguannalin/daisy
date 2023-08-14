@@ -51,8 +51,8 @@ table {
 
 td {
   border: 3px solid #333;
-  width: 48px;
-  height: 48px;
+  width: 72px;
+  height: 72px;
   font-size: 36px;
   text-align: center;
   vertical-align: top;
@@ -61,6 +61,7 @@ td {
 td input {
   max-width: 36px;
   max-height: inherit;
+  padding: none;
   border: none;
   background-color: transparent;
 }
