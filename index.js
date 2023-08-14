@@ -5,7 +5,9 @@ window.addEventListener("load", () => {
   // for each match, validate if exists in dictionary with row and col
 
   let dictionary = {};
+  let phrases = [];
   let puzzle;
+  let pIndex = -1;
 
   function getRandomInt(min, max) {
     min = Math.ceil(min);
@@ -14,11 +16,16 @@ window.addEventListener("load", () => {
   }
 
   function getRandomWord() {
-    const randomKey = Object.keys(dictionary)[getRandomInt(0, Object.keys(dictionary).length)];
-    return dictionary[randomKey][getRandomInt(0, dictionary[randomKey].length)];
+    if (phrases.length < 1) phrases = Object.keys(dictionary).filter((key) => key.length == 4);
+    // console.log(phrases);
+    // const randomKey = Object.keys(dictionary)[getRandomInt(0, Object.keys(dictionary).length)];
+    // return dictionary[randomKey][getRandomInt(0, dictionary[randomKey].length)];
+    pIndex+=1;
+    return phrases[pIndex];
   }
 
   function solve(grid, r, c) {
+    console.log(grid);
     if (r < 3 && c > 3) { r += 1; c = 0 };
     if (r == 3 && c > 3) return grid;
     let rowStr = grid[r];
@@ -85,7 +92,7 @@ window.addEventListener("load", () => {
     dictionary = r;
     let count = 0; // for the really bad luck
     puzzle = getPuzzle();
-    while ((!puzzle || puzzle[3]?.length < 4) && count < 25) {
+    while ((!puzzle || puzzle[3]?.length < 4) && pIndex < phrases.length-1) {
       puzzle = getPuzzle();
       count++;
     }
