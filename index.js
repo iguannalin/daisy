@@ -9,9 +9,7 @@ window.addEventListener("load", () => {
 
   let dictionary = {};
   let phrases = [];
-  let tried = [];
   let puzzle;
-  let pIndex = -1;
 
   function getRandomInt(min, max) {
     min = Math.ceil(min);
@@ -20,14 +18,7 @@ window.addEventListener("load", () => {
   }
 
   function getRandomWord() {
-    // const randomKey = Object.keys(dictionary)[getRandomInt(0, Object.keys(dictionary).length)];
-    // return dictionary[randomKey][getRandomInt(0, dictionary[randomKey].length)];
-    pIndex+=1;
-    return phrases[pIndex];
-    const phrase = "";
-    while (phrase && !tried.includes(phrase)) phrases[getRandomInt(0, phrases.length)];
-    tried.push(phrase);
-    return phrase;
+    return phrases[getRandomInt(0, phrases.length)];
   }
 
   function solve(grid, r, c) {
@@ -35,7 +26,9 @@ window.addEventListener("load", () => {
     if (r == 3 && c > 3) return grid;
     let rowStr = grid[r];
     let colStr = "";
-    grid.forEach((row) => colStr += row[c] ? row[c] : "");
+    // console.log(grid);
+    // console.count();
+    grid.forEach((row) => colStr += (row && row[c]) ? row[c] : "");
 
     let result = null;
 
@@ -50,8 +43,8 @@ window.addEventListener("load", () => {
       }
     } else if (colStr && dictionary[colStr]) {
       for (let i = 0; i < dictionary[colStr].length; i++) {
-        let match = dictionary[colStr][i];
-        grid[r] = match[r];
+        let match = dictionary[colStr]?.length >= i ? dictionary[colStr][i] : "";
+        grid[r] = match.length >= r ? match[r] : "";
         let res = solve(grid, r, c+1);
         if (res) return res;
       }
@@ -61,7 +54,7 @@ window.addEventListener("load", () => {
 
   function getPuzzle() {
     let starter = "";
-    while (starter.length != 4) starter = getRandomWord();
+    while (!starter || starter.length < 4) starter = getRandomWord();
     return solve([starter,"","",""], 1, 0);
   }
 
@@ -95,6 +88,11 @@ window.addEventListener("load", () => {
     }
   }
 
+  // fetch("tired.json").then((f) => f.json()).then((r) => {
+  //   console.log(r);
+  //   tried = r;
+  // });
+
   // amazing chengyu data source -- http://thuocl.thunlp.org/
   fetch("https://annaylin.com/100-days/chengyu/THUOCL_chengyu.txt").then((f) => f.text()).then((r) => {
     phrases = r.split(",");
@@ -104,7 +102,7 @@ window.addEventListener("load", () => {
     dictionary = r;
     let count = 0; // for the really bad luck
     puzzle = getPuzzle();
-    while ((!puzzle || puzzle[3]?.length < 4) && pIndex < phrases.length) {
+    while ((!puzzle || puzzle[3]?.length < 4) && count < phrases.length) {
       puzzle = getPuzzle();
       count++;
     }
@@ -117,6 +115,5 @@ window.addEventListener("load", () => {
       document.getElementById("container").appendChild(p);
     }
     console.log("Solved: ", puzzle, count);
-    console.log(tried);
   });
 });
