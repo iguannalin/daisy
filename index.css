@@ -26,8 +26,23 @@ body {
   height: 100vh;
   display: flex;
   justify-content: center;
+  align-items: center;
   flex-flow: column;
   cursor: pointer;
+}
+
+button {
+  border: none;
+  background: transparent;
+  font-size: 48px;
+  cursor: pointer;
+  margin-bottom: 24px;
+  color: #a0a0a0;
+  text-shadow: #858ebc -2px 2px 8px;
+}
+
+button:hover {
+  color: #f9faffde;
 }
 
 table {

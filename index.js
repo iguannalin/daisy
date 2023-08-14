@@ -1,10 +1,15 @@
 window.addEventListener("load", () => {
-  // traverse row
-  // traverse col 
-  // find matches for row col
-  // for each match, validate if exists in dictionary with row and col
+  document.getElementById("reveal").onclick = (e) => {
+    if (!puzzle) return;
+    e.target.innerHTML = "⚉";
+    e.target.style.color = "#f9faffde";
+    initGrid(puzzle, true);
+    e.target.onclick = null;
+  }
 
   let dictionary = {};
+  let phrases = [];
+  let tried = [];
   let puzzle;
   let pIndex = -1;
 
@@ -19,6 +24,10 @@ window.addEventListener("load", () => {
     // return dictionary[randomKey][getRandomInt(0, dictionary[randomKey].length)];
     pIndex+=1;
     return phrases[pIndex];
+    const phrase = "";
+    while (phrase && !tried.includes(phrase)) phrases[getRandomInt(0, phrases.length)];
+    tried.push(phrase);
+    return phrase;
   }
 
   function solve(grid, r, c) {
@@ -62,14 +71,17 @@ window.addEventListener("load", () => {
     else e.target.classList.remove("red");
   }
 
-  const grid = document.getElementById("grid");
-  function initGrid(puzzle) {
+  function initGrid(puzzle, reveal = false) {
     const chance = (Math.random() > 0.5);
+    const grid = document.getElementById("grid");
+    grid.innerHTML = "";
     for (let i = 0; i < 4; i++) {
       const tr = document.createElement("tr");
       puzzle[i].split("").forEach((letter, j) => {
         const td = document.createElement("td");
-        if (chance && ((i == 0 && j == 0) || (i == 1 && j == 1) || (i == 2 && j == 2) || (i == 3 && j == 3))) {
+        if (reveal) {
+          td.innerHTML = letter;
+        } else if (chance && ((i == 0 && j == 0) || (i == 1 && j == 1) || (i == 2 && j == 2) || (i == 3 && j == 3))) {
           td.innerHTML = letter;
         } else if (!chance && ((i == 0 && j == 0) || (i == 0 && j == 3) || (i == 3 && j == 0) || (i == 3 && j == 3))) {
           td.innerHTML = letter;
@@ -105,5 +117,6 @@ window.addEventListener("load", () => {
       document.getElementById("container").appendChild(p);
     }
     console.log("Solved: ", puzzle, count);
+    console.log(tried);
   });
 });
