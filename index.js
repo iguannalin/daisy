@@ -5,7 +5,6 @@ window.addEventListener("load", () => {
   // for each match, validate if exists in dictionary with row and col
 
   let dictionary = {};
-  let phrases = [];
   let puzzle;
   let pIndex = -1;
 
@@ -16,8 +15,6 @@ window.addEventListener("load", () => {
   }
 
   function getRandomWord() {
-    if (phrases.length < 1) phrases = Object.keys(dictionary).filter((key) => key.length == 4);
-    // console.log(phrases);
     // const randomKey = Object.keys(dictionary)[getRandomInt(0, Object.keys(dictionary).length)];
     // return dictionary[randomKey][getRandomInt(0, dictionary[randomKey].length)];
     pIndex+=1;
@@ -25,7 +22,6 @@ window.addEventListener("load", () => {
   }
 
   function solve(grid, r, c) {
-    console.log(grid);
     if (r < 3 && c > 3) { r += 1; c = 0 };
     if (r == 3 && c > 3) return grid;
     let rowStr = grid[r];
@@ -88,11 +84,15 @@ window.addEventListener("load", () => {
   }
 
   // amazing chengyu data source -- http://thuocl.thunlp.org/
+  fetch("https://annaylin.com/100-days/chengyu/THUOCL_chengyu.txt").then((f) => f.text()).then((r) => {
+    phrases = r.split(",");
+  });
+  
   fetch("dictionary.json").then((f) => f.json()).then((r) => {
     dictionary = r;
     let count = 0; // for the really bad luck
     puzzle = getPuzzle();
-    while ((!puzzle || puzzle[3]?.length < 4) && pIndex < phrases.length-1) {
+    while ((!puzzle || puzzle[3]?.length < 4) && pIndex < phrases.length) {
       puzzle = getPuzzle();
       count++;
     }
