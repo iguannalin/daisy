@@ -9,7 +9,9 @@ window.addEventListener("load", () => {
 
   let dictionary = {};
   let phrases = [];
+  let tried = [];
   let puzzle;
+  let temp = "";
 
   function getRandomInt(min, max) {
     min = Math.ceil(min);
@@ -26,11 +28,7 @@ window.addEventListener("load", () => {
     if (r == 3 && c > 3) return grid;
     let rowStr = grid[r];
     let colStr = "";
-    // console.log(grid);
-    // console.count();
     grid.forEach((row) => colStr += (row && row[c]) ? row[c] : "");
-
-    let result = null;
 
     if (rowStr && dictionary[rowStr]) {
       for (let i = 0; i < dictionary[rowStr].length; i++) {
@@ -49,12 +47,13 @@ window.addEventListener("load", () => {
         if (res) return res;
       }
     }
-    return result;
+    return null;
   }
 
   function getPuzzle() {
     let starter = "";
-    while (!starter || starter.length < 4) starter = getRandomWord();
+    while (!starter || tried.includes(starter) || starter.length < 4) starter = getRandomWord();
+    temp = starter;
     return solve([starter,"","",""], 1, 0);
   }
 
@@ -87,33 +86,34 @@ window.addEventListener("load", () => {
       grid.appendChild(tr);
     }
   }
-
-  // fetch("tired.json").then((f) => f.json()).then((r) => {
-  //   console.log(r);
-  //   tried = r;
-  // });
-
+  
   // amazing chengyu data source -- http://thuocl.thunlp.org/
   fetch("https://annaylin.com/100-days/chengyu/THUOCL_chengyu.txt").then((f) => f.text()).then((r) => {
     phrases = r.split(",");
   });
-  
-  fetch("dictionary.json").then((f) => f.json()).then((r) => {
-    dictionary = r;
-    let count = 0; // for the really bad luck
-    puzzle = getPuzzle();
-    while ((!puzzle || puzzle[3]?.length < 4) && count < phrases.length) {
+
+  fetch(`https://seasons986.pythonanywhere.com/check`).then((r) => r.json().then((res) => {
+    tried = res;
+    
+    fetch("dictionary.json").then((f) => f.json()).then((r) => {
+      dictionary = r;
+      let count = 0; // for the really bad luck
       puzzle = getPuzzle();
-      count++;
-    }
-    if (puzzle) {
-      initGrid(puzzle);
-    } else {
-      const p = document.createElement("a");
-      p.innerHTML = "refresh";
-      p.href = "javascript:window.location.reload(true);";
-      document.getElementById("container").appendChild(p);
-    }
-    console.log("Solved: ", puzzle, count);
-  });
+      while ((!puzzle || puzzle[3]?.length < 4) && count < phrases.length) {
+        // if (temp) fetch(`https://seasons986.pythonanywhere.com/add?phrase=${temp}`);
+        // temp = "";
+        puzzle = getPuzzle();
+        count++;
+      }
+      if (puzzle) {
+        initGrid(puzzle);
+      } else {
+        const p = document.createElement("a");
+        p.innerHTML = "refresh";
+        p.href = "javascript:window.location.reload(true);";
+        document.getElementById("container").appendChild(p);
+      }
+      console.log("Solved: ", puzzle, count);
+    });
+  }));
 });
