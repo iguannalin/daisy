@@ -12,6 +12,7 @@ window.addEventListener("load", () => {
   let tried = [];
   let puzzle;
   let temp = "";
+  let debounce = false;
 
   function getRandomInt(min, max) {
     min = Math.ceil(min);
@@ -100,8 +101,10 @@ window.addEventListener("load", () => {
       let count = 0; // for the really bad luck
       puzzle = getPuzzle();
       while ((!puzzle || puzzle[3]?.length < 4) && count < phrases.length) {
-        // if (temp) fetch(`https://seasons986.pythonanywhere.com/add?phrase=${temp}`);
-        // temp = "";
+        // if (temp && !debounce) setTimeout(() => fetch(`https://seasons986.pythonanywhere.com/add${temp}`).then(() => {
+        //   temp = "";
+        //   debounce = true;
+        // }), 500);
         puzzle = getPuzzle();
         count++;
       }
